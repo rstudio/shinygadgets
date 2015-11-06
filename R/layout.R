@@ -101,17 +101,27 @@ collapseSizes <- function(padding) {
     collapse = " ")
 }
 
+#' Run gadget
+#'
+#' Runs a Shiny Gadget app. If running in RStudio, the gadget will be displayed
+#' in the Viewer pane; if not, and the \code{viewer} option has not been set,
+#' then the gadget will be opened in your system's browser.
+#'
+#' @param app A \code{\link[shiny]{shinyApp}} object.
+#' @param port The TCP port that the application should listen on. If the port
+#'   is not specified, and the \code{shiny.port} option is set (with
+#'   \code{options(shiny.port = XX)}), then that port will be used. Otherwise,
+#'   use a random port.
+#'
 #' @export
-runGadget <- function(ui, server, port = getOption("shiny.port"),
+runGadget <- function(app, port = getOption("shiny.port"),
   launch.browser = getOption("viewer", TRUE)) {
-
-  shiny::runApp(shinyApp(ui, server), port = port,
-    launch.browser = launch.browser)
+  shiny::runApp(app, port = port, launch.browser = launch.browser)
 }
 
 #' @export
-tabstripPanel <- function(..., between = NULL) {
-  ts <- shiny:::buildTabset(list(...), "gadget-tabs")
+tabstripPanel <- function(..., id = NULL, selected = NULL, between = NULL) {
+  ts <- buildTabset(list(...), "gadget-tabs", id, selected)
 
   htmltools::attachDependencies(
     tagList(
@@ -121,6 +131,115 @@ tabstripPanel <- function(..., between = NULL) {
     ),
     gadgetDependencies()
   )
+}
+
+buildTabset <- function(tabs, ulClass, id = NULL, selected = NULL) {
+
+  # build tab nav list and tab content div
+
+  # add tab input sentinel class if we have an id
+  if (!is.null(id))
+    ulClass <- paste(ulClass, "shiny-tab-input")
+
+  tabNavList <- tags$ul(class = ulClass, id = id)
+  tabContent <- tags$div(class = "tab-content")
+  firstTab <- TRUE
+  tabsetId <- 1000 + sample.int(9000, 1)
+  tabId <- 1
+  for (divTag in tabs) {
+
+    # check for text; pass it to the textFilter or skip it if there is none
+    if (is.character(divTag)) {
+      if (!is.null(textFilter))
+        tabNavList <- tagAppendChild(tabNavList, textFilter(divTag))
+      next
+    }
+
+    # compute id and assign it to the div
+    thisId <- paste("tab", tabsetId, tabId, sep="-")
+    divTag$attribs$id <- thisId
+    tabId <- tabId + 1
+
+    tabValue <- divTag$attribs$`data-value`
+
+    # function to append an optional icon to an aTag
+    appendIcon <- function(aTag, iconClass) {
+      if (!is.null(iconClass)) {
+        # for font-awesome we specify fixed-width
+        if (grepl("fa-", iconClass, fixed = TRUE))
+          iconClass <- paste(iconClass, "fa-fw")
+        aTag <- tagAppendChild(aTag, icon(name = NULL, class = iconClass))
+      }
+      aTag
+    }
+
+    # check for a navbarMenu and handle appropriately
+    if (inherits(divTag, "shiny.navbarmenu")) {
+
+      # create the a tag
+      aTag <- tags$a(href="#",
+        class="dropdown-toggle",
+        `data-toggle`="dropdown")
+
+      # add optional icon
+      aTag <- appendIcon(aTag, divTag$iconClass)
+
+      # add the title and caret
+      aTag <- tagAppendChild(aTag, divTag$title)
+      aTag <- tagAppendChild(aTag, tags$b(class="caret"))
+
+      # build the dropdown list element
+      liTag <- tags$li(class = "dropdown", aTag)
+
+      # build the child tabset
+      tabset <- buildTabset(divTag$tabs, "dropdown-menu")
+      liTag <- tagAppendChild(liTag, tabset$navList)
+
+      # don't add a standard tab content div, rather add the list of tab
+      # content divs that are contained within the tabset
+      divTag <- NULL
+      tabContent <- tagAppendChildren(tabContent,
+        list = tabset$content$children)
+    }
+    # else it's a standard navbar item
+    else {
+      # create the a tag
+      aTag <- tags$a(href=paste("#", thisId, sep=""),
+        `data-toggle` = "tab",
+        `data-value` = tabValue)
+
+      # append optional icon
+      aTag <- appendIcon(aTag, divTag$attribs$`data-icon-class`)
+
+      # add the title
+      aTag <- tagAppendChild(aTag, divTag$attribs$title)
+
+      # create the li tag
+      liTag <- tags$li(aTag)
+    }
+
+    if (is.null(tabValue)) {
+      tabValue <- divTag$attribs$title
+    }
+
+    # If appropriate, make this the selected tab (don't ever do initial
+    # selection of tabs that are within a navbarMenu)
+    if ((ulClass != "dropdown-menu") &&
+        ((firstTab && is.null(selected)) ||
+            (!is.null(selected) && identical(selected, tabValue)))) {
+      liTag$attribs$class <- "active"
+      divTag$attribs$class <- "tab-pane active"
+      firstTab = FALSE
+    }
+
+    divTag$attribs$title <- NULL
+
+    # append the elements to our lists
+    tabNavList <- tagAppendChild(tabNavList, liTag)
+    tabContent <- tagAppendChild(tabContent, divTag)
+  }
+
+  list(navList = tabNavList, content = tabContent)
 }
 
 gadgetDependencies <- function() {

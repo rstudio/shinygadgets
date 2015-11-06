@@ -1,16 +1,11 @@
 <!DOCTYPE html>
 <html class="fill-page">
 <head>
-	<!-- <script>less = { env: 'development'};</script>
-	<script src="less.js"></script>
-	<script>less.watch();</script> -->
-
-	<script src="bower_components/jquery/dist/jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="bootstrap-3.3.5/dist/css/bootstrap.min.css"/>
-	<script src="bootstrap-3.3.5/dist/js/bootstrap.min.js"></script>
-	<!--<link rel="stylesheet/less" type="text/css" href="gadgets.less"/>-->
-	<link rel="stylesheet" type="text/css" href="gadgets/gadgets.less.css"/>
-	<link rel="stylesheet" type="text/css" href="bower_components/font-awesome/css/font-awesome.css"/>
+	<script src="tools/node_modules/jquery/dist/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="tools/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+	<script src="tools/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="inst/www/shinygadgets.css"/>
+	<link rel="stylesheet" type="text/css" href="tools/node_modules/font-awesome/css/font-awesome.css"/>
 </head>
 <body>
 	<div class="gadget-container">
@@ -46,10 +41,23 @@
 				</div>
 			</div>
 		</div>
-		<div class="gadget-block-button">
+		<footer class="gadget-block-button">
 			<button class="btn btn-default" type="button">Previous step</button>
 			<button class="btn btn-primary" type="button">Next step</button>
-		</div>
+		</footer>
+		<footer class="gadget-block-button">
+			<div class="btn-toolbar" role="toolbar">
+				<div class="btn-group" role="group" style="flex: 3">
+				  <button type="button" class="btn btn-default">Left</button>
+				  <button type="button" class="btn btn-default">Middle</button>
+				  <button type="button" class="btn btn-default">Right</button>
+				</div>
+				<div class="btn-group" role="group" style="flex: 2">
+				  <button type="button" class="btn btn-default">Left</button>
+				  <button type="button" class="btn btn-default">Right</button>
+				</div>
+			</div>
+		</footer>
 		<div class="gadget-tabs-container">
 			<ul class="gadget-tabs">
 				<li class="active">

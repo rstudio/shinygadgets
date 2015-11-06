@@ -1,13 +1,27 @@
 @import "variables.less";
 
 .gadget-block-button {
-	background-color: @gadget-chrome-bg;
-	border-top: @gadget-border;
-	padding: 0 6px;
+	.gadget-footer;
 	display: flex;
-	.btn {
-		display: block;
+	align-content: center;
+	justify-content: center;
+
+	>.btn {
 		flex: 1;
-		margin: 6px 6px;
+		display: block;
+		margin: 0 3px;
+	}
+	>.btn:first-child {
+		margin-left: 0;
+	}
+	>.btn:last-child {
+		margin-right: 0;
+	}
+	>.btn-group, >.btn-toolbar, >.btn-toolbar>.btn-group {
+		flex: 1;
+		display: flex;
+		.btn {
+			flex: 1;
+		}
 	}
 }

@@ -6,6 +6,8 @@
     "grunt-contrib-watch": "~0.6.1",
     "jit-grunt": "~0.9.1",
     "grunt-postcss": "~0.7.1",
-    "autoprefixer": "~6.1.0"
+    "autoprefixer": "~6.1.0",
+    "jquery": "~1.11.3",
+    "font-awesome": "~4.4.0"
   }
 }

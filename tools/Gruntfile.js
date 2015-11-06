@@ -5,9 +5,9 @@ module.exports = function(grunt) {
     less: {
       development: {
         options: {
-          compress: true,
-          yuicompress: true,
-          optimization: 2
+        //   compress: true,
+        //   yuicompress: true,
+        //   optimization: 2
         },
         files: {
           "../inst/www/shinygadgets.css": "../less/gadgets.less" // destination file and source file
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     },
     watch: {
       styles: {
-        files: ["less/**/*.less"], // which files to watch
+        files: ["../less/**/*.less"], // which files to watch
         tasks: ["less", "postcss"],
         options: {
           nospawn: true
