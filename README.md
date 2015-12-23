@@ -8,8 +8,10 @@ Shiny _gadgets_ are used from the R console during data analysis, to assist in t
 
 ## Installing
 
+The **shinygadgets** package depends on the development versions of the **shiny** and **htmltools** packages so you should be sure to install all three packages from GitHub:
+
 ```r
-devtools::install_github("rstudio/shinygadgets")
+devtools::install_github(c("rstudio/htmlwidgets", "rstudio/shiny", "rstudio/shinygadgets"))
 ```
 
 ## Example
